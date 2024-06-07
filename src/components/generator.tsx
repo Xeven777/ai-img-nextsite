@@ -14,13 +14,14 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Skeleton } from "./ui/skeleton";
+import { DownloadIcon } from "lucide-react";
 
 export default function Generator() {
   const prompt = useRef<HTMLTextAreaElement>(null);
   const [loading, setLoading] = useState(false);
   const [guidance, setGuidance] = useState([7.5]);
   const [strength, setStrength] = useState([1]);
-  const [model, setModel] = useState();
+  const [model, setModel] = useState("sxdl-lightning");
   const [imgUrl, setImgUrl] = useState("");
   const [tperformance, setPerformance] = useState(0);
   const url = "https://ai-image-api.xeven.workers.dev/img";
@@ -41,14 +42,13 @@ export default function Generator() {
           "&strength=" +
           strength;
         const t1 = performance.now();
-        console.log(newUrl);
         const response = await fetch(newUrl, {
           method: "get",
         });
 
         if (response.ok) {
           const t2 = performance.now();
-          setPerformance(t2 - t1);
+          setPerformance(t2 - t1 - 300);
           const blob = await response.blob();
           const objectUrl = URL.createObjectURL(blob);
           setImgUrl(objectUrl);
@@ -88,7 +88,7 @@ export default function Generator() {
         </div>
         <div className="grid gap-4">
           <Label htmlFor="model">Model</Label>
-          <Select onValueChange={model} defaultValue={"sdxl-lightning"}>
+          <Select onValueChange={setModel} defaultValue={"sdxl-lightning"}>
             <SelectTrigger>
               <SelectValue />
             </SelectTrigger>
@@ -146,7 +146,7 @@ export default function Generator() {
         {loading ? (
           <Skeleton className="w-full h-full rounded-lg" />
         ) : (
-          <div className="flex m-2 border shadow hover:shadow-lg hover:shadow-gray-600 transition-all duration-500 shadow-gray-600 aspect-square overflow-hidden rounded-lg">
+          <div className="flex relative m-2 border shadow hover:shadow-lg hover:shadow-gray-600 transition-all duration-500 shadow-gray-600 aspect-square overflow-hidden rounded-lg">
             <Image
               src={
                 imgUrl ||
@@ -157,6 +157,22 @@ export default function Generator() {
               height={600}
               className="max-w-full object-cover group-hover:scale-110 transition-all duration-700"
             />
+            {imgUrl && (
+              <Button
+                size={"icon"}
+                onClick={() => {
+                  if (imgUrl) {
+                    const a = document.createElement("a");
+                    a.href = imgUrl;
+                    a.download = "generated-image.png";
+                    a.click();
+                  }
+                }}
+                className="absolute bottom-2 right-2 backdrop-blur-md bg-white/20 hover:bg-white/30 rounded-full p-2"
+              >
+                <DownloadIcon />
+              </Button>
+            )}
           </div>
         )}
 
