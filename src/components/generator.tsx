@@ -28,8 +28,18 @@ export default function Generator() {
   async function generateImage() {
     try {
       setLoading(true);
+      console.log(model, guidance, strength);
       if (prompt.current !== null) {
-        const newUrl = url + "?prompt=" + prompt.current.value;
+        const newUrl =
+          url +
+          "?prompt=" +
+          prompt.current.value +
+          "&model=" +
+          model +
+          "&guidance=" +
+          guidance +
+          "&strength=" +
+          strength;
         const t1 = performance.now();
         console.log(newUrl);
         const response = await fetch(newUrl, {
@@ -60,7 +70,7 @@ export default function Generator() {
       <div className="flex flex-col gap-6">
         <div className="grid gap-4">
           <h1 className="text-3xl font-bold">Image Generation</h1>
-          <p className="text-gray-500 dark:text-gray-400">
+          <p className="text-muted-foreground">
             Generate unique images from text prompts.
           </p>
         </div>
@@ -78,9 +88,9 @@ export default function Generator() {
         </div>
         <div className="grid gap-4">
           <Label htmlFor="model">Model</Label>
-          <Select>
+          <Select onValueChange={model} defaultValue={"sdxl-lightning"}>
             <SelectTrigger>
-              <SelectValue placeholder="Choose" />
+              <SelectValue />
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="sdxl-lightning">
@@ -98,6 +108,8 @@ export default function Generator() {
         <div className="grid gap-4">
           <Label htmlFor="guidance">Guidance</Label>
           <Slider
+            value={guidance}
+            onValueChange={setGuidance}
             id="guidance"
             name="guidance"
             min={4}
@@ -110,6 +122,8 @@ export default function Generator() {
         <div className="grid gap-4">
           <Label htmlFor="strength">Strength</Label>
           <Slider
+            value={strength}
+            onValueChange={setStrength}
             id="strength"
             name="strength"
             min={0.2}
@@ -132,7 +146,7 @@ export default function Generator() {
         {loading ? (
           <Skeleton className="w-full h-full rounded-lg" />
         ) : (
-          <div className="flex m-2 border shadow-lg shadow-gray-600 aspect-square overflow-hidden rounded-lg">
+          <div className="flex m-2 border shadow hover:shadow-lg hover:shadow-gray-600 transition-all duration-500 shadow-gray-600 aspect-square overflow-hidden rounded-lg">
             <Image
               src={
                 imgUrl ||
@@ -146,7 +160,7 @@ export default function Generator() {
           </div>
         )}
 
-        <p>Time taken: {tperformance}ms</p>
+        <p>Time taken: {(tperformance / 1000).toFixed(2)} secs</p>
       </div>
     </div>
   );
