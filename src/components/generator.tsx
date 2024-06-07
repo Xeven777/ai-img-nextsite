@@ -4,25 +4,54 @@ import { Textarea } from "@/components/ui/textarea";
 import { Slider } from "@/components/ui/slider";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
+import { toast } from "sonner";
 import { useRef, useState } from "react";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Skeleton } from "./ui/skeleton";
 
 export default function Generator() {
   const prompt = useRef<HTMLTextAreaElement>(null);
+  const [loading, setLoading] = useState(false);
+  const [guidance, setGuidance] = useState([7.5]);
+  const [strength, setStrength] = useState([1]);
+  const [model, setModel] = useState();
   const [imgUrl, setImgUrl] = useState("");
+  const [tperformance, setPerformance] = useState(0);
   const url = "https://ai-image-api.xeven.workers.dev/img";
 
   async function generateImage() {
-    if (prompt.current !== null) {
-      const newUrl = url + "?prompt=" + prompt.current.value;
-      const response = await fetch(newUrl, {
-        method: "get",
-      });
+    try {
+      setLoading(true);
+      if (prompt.current !== null) {
+        const newUrl = url + "?prompt=" + prompt.current.value;
+        const t1 = performance.now();
+        console.log(newUrl);
+        const response = await fetch(newUrl, {
+          method: "get",
+        });
 
-      if (response.ok) {
-        const blob = await response.blob();
-        const objectUrl = URL.createObjectURL(blob);
-        setImgUrl(objectUrl);
+        if (response.ok) {
+          const t2 = performance.now();
+          setPerformance(t2 - t1);
+          const blob = await response.blob();
+          const objectUrl = URL.createObjectURL(blob);
+          setImgUrl(objectUrl);
+          toast.success("Image generated successfully!");
+        } else {
+          toast.error("An error occurred while generating the image.");
+        }
       }
+    } catch (error) {
+      toast.error("An error occurred while generating the image.");
+      console.error(error);
+    } finally {
+      setLoading(false);
     }
   }
 
@@ -38,6 +67,7 @@ export default function Generator() {
         <div className="grid gap-4">
           <Label htmlFor="prompt">Prompt</Label>
           <Textarea
+            required
             ref={prompt}
             id="prompt"
             name="prompt"
@@ -47,14 +77,33 @@ export default function Generator() {
           />
         </div>
         <div className="grid gap-4">
+          <Label htmlFor="model">Model</Label>
+          <Select>
+            <SelectTrigger>
+              <SelectValue placeholder="Choose" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="sdxl-lightning">
+                Stable Diffusion Lightning (Fastest)⚡
+              </SelectItem>
+              <SelectItem value="sdxl">
+                Stable Diffusion Base (Best for all around) ✨
+              </SelectItem>
+              <SelectItem value="dreamshaper">
+                Dreamshaper (Realistic Portraits)😇
+              </SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+        <div className="grid gap-4">
           <Label htmlFor="guidance">Guidance</Label>
           <Slider
             id="guidance"
             name="guidance"
-            min={0}
-            max={20}
-            step={1}
-            defaultValue={[10]}
+            min={4}
+            max={10}
+            step={0.5}
+            defaultValue={[7.5]}
             className="w-full"
           />
         </div>
@@ -63,25 +112,41 @@ export default function Generator() {
           <Slider
             id="strength"
             name="strength"
-            min={0}
-            max={20}
-            step={1}
-            defaultValue={[10]}
+            min={0.2}
+            max={2}
+            step={0.1}
+            defaultValue={[1]}
             className="w-full"
           />
         </div>
-        <Button size="lg" className="w-full" onClick={() => generateImage()}>
+        <Button
+          size="lg"
+          className="w-full"
+          onClick={() => generateImage()}
+          disabled={loading}
+        >
           Generate Image
         </Button>
       </div>
-      <div className="flex items-center justify-center ">
-        <Image
-          src={imgUrl}
-          alt="Generated Image"
-          width={500}
-          height={500}
-          className="max-w-full object-cover rounded-lg border border-gray-200 dark:border-gray-800"
-        />
+      <div className="flex flex-col min-h-[500px] group items-center justify-center">
+        {loading ? (
+          <Skeleton className="w-full h-full rounded-lg" />
+        ) : (
+          <div className="flex m-2 border shadow-lg shadow-gray-600 aspect-square overflow-hidden rounded-lg">
+            <Image
+              src={
+                imgUrl ||
+                "https://assets.lummi.ai/assets/QmXio7iaCQepiJ8XRe6EgwbvbQamtnn3eLBCxfwWB9odfB?auto=format&w=1500"
+              }
+              alt="Generated Image"
+              width={600}
+              height={600}
+              className="max-w-full object-cover group-hover:scale-110 transition-all duration-700"
+            />
+          </div>
+        )}
+
+        <p>Time taken: {tperformance}ms</p>
       </div>
     </div>
   );
