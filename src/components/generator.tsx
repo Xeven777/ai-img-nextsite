@@ -24,7 +24,7 @@ export default function Generator() {
   const [model, setModel] = useState("sxdl-lightning");
   const [imgUrl, setImgUrl] = useState("");
   const [tperformance, setPerformance] = useState(0);
-  const url = "https://ai-image-api.xeven.workers.dev/img";
+  const url = process.env.NEXT_PUBLIC_URL || "";
 
   async function generateImage() {
     try {
