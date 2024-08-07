@@ -9,12 +9,16 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@gsap/react": "^2.1.1",
     "@radix-ui/react-label": "^2.0.2",
     "@radix-ui/react-select": "^2.0.0",
     "@radix-ui/react-slider": "^1.1.2",
     "@radix-ui/react-slot": "^1.0.2",
+    "@studio-freight/react-lenis": "^0.0.47",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
+    "gsap": "^3.12.5",
+    "lenis": "^1.1.9",
     "lucide-react": "^0.387.0",
     "next": "14.2.3",
     "next-themes": "^0.3.0",

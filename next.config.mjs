@@ -5,6 +5,9 @@ const nextConfig = {
             {
                 hostname: 'assets.lummi.ai',
             },
+            {
+                hostname: 'images.unsplash.com',
+            }
         ],
     },
 };
