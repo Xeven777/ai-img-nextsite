@@ -9,7 +9,7 @@ const inter = Sora({ subsets: ["latin"] });
 export const metadata: Metadata = {
   title: "AI Image Generator",
   description:
-    "Generate images using AI models. Made using Next.js and Cloudflare.",
+    "Generate images using SDXL and dreamshaper models. Made using Next.js and Cloudflare.",
 };
 
 export default function RootLayout({

@@ -66,10 +66,12 @@ export default function Generator() {
   }
 
   return (
-    <div className="grid md:grid-cols-2 grid-cols-1 gap-24 max-w-6xl mx-auto px-4 py-8 md:py-12 w-full">
+    <div className="grid md:grid-cols-2 grid-cols-1 gap-24 max-w-6xl mx-auto px-4 py-8 md:py-24 w-full relative">
+      <div className="fixed h-32 w-1/3 -left-24 top-1/2 bg-zinc-500/40 blur-3xl -translate-x-1/2"></div>
+      <div className="fixed h-32 w-1/3 top-1/2 -right-28 bg-zinc-500/40 blur-3xl translate-x-1/2"></div>
       <div className="flex flex-col gap-6">
         <div className="grid gap-4">
-          <h1 className="text-3xl font-bold">Image Generation</h1>
+          <h1 className="text-4xl font-bold">Image Generation</h1>
           <p className="text-muted-foreground">
             Generate unique images from text prompts.
           </p>
