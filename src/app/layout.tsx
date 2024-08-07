@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Sora } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@/components/ui/sonner";
+import Clarity from "@/components/Clarity";
 
 const inter = Sora({ subsets: ["latin"] });
 
@@ -18,6 +19,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="dark">
+      {process.env.NODE_ENV === "production" ? <Clarity /> : null}
       <body className={inter.className}>
         {children}
         <Toaster richColors />
