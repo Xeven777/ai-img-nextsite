@@ -10,6 +10,7 @@ export const metadata: Metadata = {
   title: "AI Image Generator",
   description:
     "Generate images using SDXL and dreamshaper models. Made using Next.js and Cloudflare.",
+  metadataBase: new URL("https://img-gen7.netlify.app/"),
 };
 
 export default function RootLayout({
