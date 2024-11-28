@@ -7,7 +7,11 @@ import { ScrollTrigger } from "gsap/dist/ScrollTrigger";
 import { ReactLenis } from "@studio-freight/react-lenis";
 
 const images = [
-  "/img (1).jpeg",
+  "/img.jpg",
+  "/generated-image(1).jpg",
+  "/generated-image(3).png",
+  "/generated-image.jpg",
+  "/img (1).jpg",
   "/img (2).jpeg",
   "/img (3).jpeg",
   "/img (4).jpeg",
@@ -109,6 +113,8 @@ const SwipeGrid = () => {
                   >
                     <Image
                       quality={90}
+                      fetchPriority="low"
+                      priority={false}
                       src={src}
                       fill={true}
                       className="grid__item-inner relative object-cover object-center h-auto min-w-[300px]"
@@ -118,9 +124,7 @@ const SwipeGrid = () => {
                 ))}
             </div>
           </div>
-          <p className="text-center text-muted-foreground">
-            The End
-          </p>
+          <p className="text-center text-muted-foreground">The End</p>
         </section>
       </div>
     </ReactLenis>

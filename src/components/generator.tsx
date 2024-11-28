@@ -1,5 +1,6 @@
 "use client";
 import { Label } from "@/components/ui/label";
+import img1 from "@/components/img.jpg";
 import { Textarea } from "@/components/ui/textarea";
 import { Slider } from "@/components/ui/slider";
 import { Button } from "@/components/ui/button";
@@ -14,12 +15,12 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Skeleton } from "./ui/skeleton";
-import { DownloadIcon } from "lucide-react";
+import { ChevronRightIcon, DownloadIcon } from "lucide-react";
+import ShimmerButton from "./ui/shimmer-button";
 
-// Rate limit settings
 const RATE_LIMITS = {
-  flux: { perMinute: 2, perHour: 5 },
-  default: { perMinute: 4, perHour: 15 },
+  flux: { perMinute: 4, perHour: 10 },
+  default: { perMinute: 8, perHour: 25 },
 };
 
 interface RateLimits {
@@ -158,6 +159,13 @@ export default function Generator() {
       <div className="fixed h-32 w-1/3 -left-24 top-1/2 bg-zinc-500/40 blur-3xl -translate-x-1/2"></div>
       <div className="fixed h-32 w-1/3 top-1/2 -right-28 bg-zinc-500/40 blur-3xl translate-x-1/2"></div>
       <div className="flex flex-col gap-6">
+        <div>
+          <ShimmerButton className="shadow-2xl ml-4">
+            <span className="text-foreground text-xs inline-flex">
+              New Flux Schnell model <ChevronRightIcon size={15} />
+            </span>
+          </ShimmerButton>
+        </div>
         <div className="grid gap-4">
           <h1 className="text-4xl font-bold">Image Generation</h1>
           <p className="text-muted-foreground">
@@ -177,7 +185,13 @@ export default function Generator() {
           />
         </div>
         <div className="grid gap-4">
-          <Label htmlFor="model">Model</Label>
+          <Label htmlFor="model">
+            Model{" "}
+            <span className="ml-5 text-xs text-muted-foreground">
+              Remaining: {remainingRequests.perMinute}/min ,{" "}
+              {remainingRequests.perHour}/hour
+            </span>
+          </Label>
           <Select onValueChange={setModel} defaultValue={"sdxl-lightning"}>
             <SelectTrigger>
               <SelectValue />
@@ -246,11 +260,6 @@ export default function Generator() {
         >
           Generate Image
         </Button>
-        <div className="text-sm mt-2">
-          <p>Remaining requests:</p>
-          <p>Per minute: {remainingRequests.perMinute}</p>
-          <p>Per hour: {remainingRequests.perHour}</p>
-        </div>
       </div>
       <div className="flex flex-col min-h-[500px] group items-center justify-center">
         {loading ? (
@@ -258,14 +267,11 @@ export default function Generator() {
         ) : (
           <div className="flex relative m-2 border shadow hover:shadow-lg hover:shadow-gray-600 transition-all duration-500 shadow-gray-600 aspect-square overflow-hidden rounded-lg">
             <Image
-              src={
-                imgUrl ||
-                "https://assets.lummi.ai/assets/QmXio7iaCQepiJ8XRe6EgwbvbQamtnn3eLBCxfwWB9odfB?auto=format&w=1500"
-              }
+              src={imgUrl || img1}
               alt="Generated Image"
               width={600}
               height={600}
-              className="max-w-full object-cover group-hover:scale-110 transition-all duration-700"
+              className="max-w-full object-cover group-hover:scale-110 transition-all bg-blue-400/10 duration-700"
             />
             {imgUrl && (
               <Button
