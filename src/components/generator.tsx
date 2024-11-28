@@ -5,7 +5,7 @@ import { Slider } from "@/components/ui/slider";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import { toast } from "sonner";
-import { useRef, useState, useCallback, useMemo } from "react";
+import { useRef, useState, useCallback, useMemo, useEffect } from "react";
 import {
   Select,
   SelectContent,
@@ -16,6 +16,87 @@ import {
 import { Skeleton } from "./ui/skeleton";
 import { DownloadIcon } from "lucide-react";
 
+// Rate limit settings
+const RATE_LIMITS = {
+  flux: { perMinute: 2, perHour: 5 },
+  default: { perMinute: 4, perHour: 15 },
+};
+
+interface RateLimits {
+  perMinute: number;
+  perHour: number;
+}
+
+const getRateLimits = (model: string): RateLimits => {
+  if (model === "flux-schnell") return RATE_LIMITS.flux;
+  return RATE_LIMITS.default;
+};
+
+const checkRateLimit = (model: string): boolean => {
+  const limits = getRateLimits(model);
+  const now = Date.now();
+  const requestTimes: number[] = JSON.parse(
+    localStorage.getItem(model) || "[]"
+  );
+
+  const requestsInLastMinute: number = requestTimes.filter(
+    (time: number) => now - time < 60 * 1000
+  ).length;
+  const requestsInLastHour: number = requestTimes.filter(
+    (time: number) => now - time < 60 * 60 * 1000
+  ).length;
+
+  if (requestsInLastMinute >= limits.perMinute) {
+    toast.error(
+      "Rate limit exceeded: Please wait a minute before trying again."
+    );
+    return false;
+  }
+
+  if (requestsInLastHour >= limits.perHour) {
+    toast.error(
+      "Rate limit exceeded: Please wait an hour before trying again."
+    );
+    return false;
+  }
+
+  return true;
+};
+
+const recordRequest = (model: string): void => {
+  const now = Date.now();
+  const requestTimes: number[] = JSON.parse(
+    localStorage.getItem(model) || "[]"
+  );
+  requestTimes.push(now);
+  localStorage.setItem(model, JSON.stringify(requestTimes));
+};
+
+interface RemainingRequests {
+  perMinute: number;
+  perHour: number;
+}
+
+const getRemainingRequests = (model: string): RemainingRequests => {
+  const limits = getRateLimits(model);
+  const now = Date.now();
+  const requestTimes: number[] = JSON.parse(
+    localStorage.getItem(model) || "[]"
+  );
+
+  const requestsInLastMinute = requestTimes.filter(
+    (time: number) => now - time < 60 * 1000
+  ).length;
+  const requestsInLastHour = requestTimes.filter(
+    (time: number) => now - time < 60 * 60 * 1000
+  ).length;
+
+  return {
+    perMinute: limits.perMinute - requestsInLastMinute,
+    perHour: limits.perHour - requestsInLastHour,
+  };
+};
+
 export default function Generator() {
   const prompt = useRef<HTMLTextAreaElement>(null);
   const [loading, setLoading] = useState(false);
@@ -24,6 +105,10 @@ export default function Generator() {
   const [model, setModel] = useState("sxdl-lightning");
   const [imgUrl, setImgUrl] = useState("");
   const [tperformance, setPerformance] = useState(0);
+  const [remainingRequests, setRemainingRequests] = useState({
+    perMinute: 0,
+    perHour: 0,
+  });
 
   const url = useMemo(
     () =>
@@ -33,7 +118,13 @@ export default function Generator() {
     []
   );
 
+  useEffect(() => {
+    setRemainingRequests(getRemainingRequests(model));
+  }, [model]);
+
   const generateImage = useCallback(async () => {
+    if (!checkRateLimit(model)) return;
+
     try {
       setLoading(true);
       if (prompt.current !== null) {
@@ -47,6 +138,8 @@ export default function Generator() {
           const blob = await response.blob();
           const objectUrl = URL.createObjectURL(blob);
           setImgUrl(objectUrl);
+          recordRequest(model);
+          setRemainingRequests(getRemainingRequests(model));
           toast.success("Image generated successfully!");
         } else {
           toast.error("An error occurred while generating the image.");
@@ -153,6 +246,11 @@ export default function Generator() {
         >
           Generate Image
         </Button>
+        <div className="text-sm mt-2">
+          <p>Remaining requests:</p>
+          <p>Per minute: {remainingRequests.perMinute}</p>
+          <p>Per hour: {remainingRequests.perHour}</p>
+        </div>
       </div>
       <div className="flex flex-col min-h-[500px] group items-center justify-center">
         {loading ? (
