@@ -4,7 +4,7 @@ import "./globals.css";
 import { Toaster } from "@/components/ui/sonner";
 import Clarity from "@/components/Clarity";
 
-const inter = Sora({ subsets: ["latin"] });
+const sora = Sora({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "AI Image Generator",
@@ -21,7 +21,7 @@ export default function RootLayout({
   return (
     <html lang="en" className="dark">
       {process.env.NODE_ENV === "production" ? <Clarity /> : null}
-      <body className={inter.className}>
+      <body className={sora.className}>
         {children}
         <Toaster richColors />
       </body>

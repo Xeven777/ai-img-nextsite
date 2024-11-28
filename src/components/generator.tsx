@@ -24,7 +24,10 @@ export default function Generator() {
   const [model, setModel] = useState("sxdl-lightning");
   const [imgUrl, setImgUrl] = useState("");
   const [tperformance, setPerformance] = useState(0);
-  const url = process.env.NEXT_PUBLIC_URL || "";
+  const url =
+    process.env.NODE_ENV === "production"
+      ? process.env.NEXT_PUBLIC_URL
+      : "http://127.0.0.1:8787/img";
 
   async function generateImage() {
     try {
@@ -96,13 +99,28 @@ export default function Generator() {
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="sdxl-lightning">
-                Stable Diffusion Lightning (Fastest)⚡
+                <span className="bg-gradient-to-r from-yellow-600 brightness-105 saturate-150 to-red-400 w-fit bg-clip-text text-transparent">
+                  Stable Diffusion Lightning
+                </span>
+                (Fastest)⚡
               </SelectItem>
               <SelectItem value="sdxl">
-                Stable Diffusion Base (Best for all around) ✨
+                <span className="bg-gradient-to-r from-red-500 via-purple-600 brightness-105 saturate-150 to-emerald-400 w-fit bg-clip-text text-transparent">
+                  Stable Diffusion Base
+                </span>
+                (Good for all around) ✨
+              </SelectItem>
+              <SelectItem value="flux-schnell">
+                <span className="bg-gradient-to-r from-lime-500 via-cyan-500 brightness-105 saturate-150 to-violet-500 w-fit bg-clip-text text-transparent">
+                  Flux Schnell
+                </span>{" "}
+                (Most Realistic and best model)🔥
               </SelectItem>
               <SelectItem value="dreamshaper">
-                Dreamshaper (Realistic Portraits)😇
+                <span className="bg-gradient-to-r from-purple-600 brightness-105 saturate-150 to-rose-400 w-fit bg-clip-text text-transparent">
+                  Dreamshaper
+                </span>
+                (Realistic Portraits)😇
               </SelectItem>
             </SelectContent>
           </Select>
