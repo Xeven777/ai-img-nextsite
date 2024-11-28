@@ -10,7 +10,7 @@ export default function Home() {
         <p>
           © Made with ❤️ by{" "}
           <a
-            href="http://bento.me/anish7"
+            href="http://anish7.me/"
             target="_blank"
             className="text-zinc-200 hover:underline"
             rel="noopener noreferrer"
