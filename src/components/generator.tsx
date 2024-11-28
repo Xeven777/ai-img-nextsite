@@ -5,7 +5,7 @@ import { Slider } from "@/components/ui/slider";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import { toast } from "sonner";
-import { useRef, useState } from "react";
+import { useRef, useState, useCallback, useMemo } from "react";
 import {
   Select,
   SelectContent,
@@ -24,30 +24,22 @@ export default function Generator() {
   const [model, setModel] = useState("sxdl-lightning");
   const [imgUrl, setImgUrl] = useState("");
   const [tperformance, setPerformance] = useState(0);
-  const url =
-    process.env.NODE_ENV === "production"
-      ? process.env.NEXT_PUBLIC_URL
-      : "http://127.0.0.1:8787/img";
 
-  async function generateImage() {
+  const url = useMemo(
+    () =>
+      process.env.NODE_ENV === "production"
+        ? process.env.NEXT_PUBLIC_URL
+        : "http://127.0.0.1:8787/img",
+    []
+  );
+
+  const generateImage = useCallback(async () => {
     try {
       setLoading(true);
-      console.log(model, guidance, strength);
       if (prompt.current !== null) {
-        const newUrl =
-          url +
-          "?prompt=" +
-          prompt.current.value +
-          "&model=" +
-          model +
-          "&guidance=" +
-          guidance +
-          "&strength=" +
-          strength;
+        const newUrl = `${url}?prompt=${prompt.current.value}&model=${model}&guidance=${guidance}&strength=${strength}`;
         const t1 = performance.now();
-        const response = await fetch(newUrl, {
-          method: "get",
-        });
+        const response = await fetch(newUrl, { method: "get" });
 
         if (response.ok) {
           const t2 = performance.now();
@@ -66,7 +58,7 @@ export default function Generator() {
     } finally {
       setLoading(false);
     }
-  }
+  }, [url, model, guidance, strength]);
 
   return (
     <div className="grid md:grid-cols-2 grid-cols-1 gap-24 max-w-6xl mx-auto px-4 py-8 md:py-24 w-full relative">
@@ -156,7 +148,7 @@ export default function Generator() {
         <Button
           size="lg"
           className="w-full"
-          onClick={() => generateImage()}
+          onClick={generateImage}
           disabled={loading}
         >
           Generate Image
