@@ -1,6 +1,6 @@
 "use client";
 import { Label } from "@/components/ui/label";
-import img1 from "@/components/img.jpg";
+import img1 from "./img.jpg";
 import { Textarea } from "@/components/ui/textarea";
 import { Slider } from "@/components/ui/slider";
 import { Button } from "@/components/ui/button";
@@ -20,6 +20,8 @@ import ShimmerButton from "./ui/shimmer-button";
 
 const RATE_LIMITS = {
   flux: { perMinute: 4, perHour: 10 },
+  lucid: { perMinute: 4, perHour: 10 },
+  phoenix: { perMinute: 4, perHour: 10 },
   default: { perMinute: 8, perHour: 25 },
 };
 
@@ -30,8 +32,10 @@ interface RateLimits {
 
 const getRateLimits = (model: string): RateLimits => {
   if (model === "flux-schnell") return RATE_LIMITS.flux;
+  if (model === "lucid-origin") return RATE_LIMITS.lucid;
+  if (model === "phoenix") return RATE_LIMITS.phoenix;
   return RATE_LIMITS.default;
-};
+};  
 
 const checkRateLimit = (model: string): boolean => {
   const limits = getRateLimits(model);
@@ -103,7 +107,7 @@ export default function Generator() {
   const [loading, setLoading] = useState(false);
   const [guidance, setGuidance] = useState([7.5]);
   const [strength, setStrength] = useState([1]);
-  const [model, setModel] = useState("sxdl-lightning");
+  const [model, setModel] = useState("flux-schnell");
   const [imgUrl, setImgUrl] = useState("");
   const [tperformance, setPerformance] = useState(0);
   const [remainingRequests, setRemainingRequests] = useState({
@@ -192,11 +196,29 @@ export default function Generator() {
               {remainingRequests.perHour}/hour
             </span>
           </Label>
-          <Select onValueChange={setModel} defaultValue={"sdxl-lightning"}>
+          <Select onValueChange={setModel} defaultValue={"flux-schnell"}>
             <SelectTrigger>
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
+              <SelectItem value="flux-schnell">
+                <span className="bg-gradient-to-r from-lime-500 via-cyan-500 brightness-105 saturate-150 to-violet-500 w-fit bg-clip-text text-transparent">
+                  Flux Schnell
+                </span>{" "}
+                (Most Realistic and best model)🔥
+              </SelectItem>
+              <SelectItem value="lucid-origin">
+                <span className="bg-gradient-to-r from-blue-500 via-purple-500 brightness-105 saturate-150 to-pink-500 w-fit bg-clip-text text-transparent">
+                  Lucid Origin
+                </span>{" "}
+                (High Quality)🌟
+              </SelectItem>
+              <SelectItem value="phoenix">
+                <span className="bg-gradient-to-r from-orange-500 via-red-500 brightness-105 saturate-150 to-yellow-500 w-fit bg-clip-text text-transparent">
+                  Phoenix
+                </span>{" "}
+                (Creative Generation)🔥
+              </SelectItem>
               <SelectItem value="sdxl-lightning">
                 <span className="bg-gradient-to-r from-yellow-600 brightness-105 saturate-150 to-red-400 w-fit bg-clip-text text-transparent">
                   Stable Diffusion Lightning
@@ -208,12 +230,6 @@ export default function Generator() {
                   Stable Diffusion Base
                 </span>
                 (Good for all around) ✨
-              </SelectItem>
-              <SelectItem value="flux-schnell">
-                <span className="bg-gradient-to-r from-lime-500 via-cyan-500 brightness-105 saturate-150 to-violet-500 w-fit bg-clip-text text-transparent">
-                  Flux Schnell
-                </span>{" "}
-                (Most Realistic and best model)🔥
               </SelectItem>
               <SelectItem value="dreamshaper">
                 <span className="bg-gradient-to-r from-purple-600 brightness-105 saturate-150 to-rose-400 w-fit bg-clip-text text-transparent">

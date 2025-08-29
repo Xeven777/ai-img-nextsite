@@ -4,7 +4,7 @@ import { useEffect, useRef } from "react";
 
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/dist/ScrollTrigger";
-import { ReactLenis } from "@studio-freight/react-lenis";
+import ReactLenis from "lenis/react";
 
 const images = [
   "/img.jpg",
