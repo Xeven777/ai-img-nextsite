@@ -1,6 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
     images: {
+        qualities: [90],
         remotePatterns: [
             {
                 hostname: 'assets.lummi.ai',
