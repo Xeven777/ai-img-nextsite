@@ -27,6 +27,7 @@ const RATE_LIMITS = {
   flux: { perMinute: 4, perHour: 10 },
   lucid: { perMinute: 4, perHour: 10 },
   phoenix: { perMinute: 4, perHour: 10 },
+  fluxdev: { perMinute: 4, perHour: 10 },
   default: { perMinute: 8, perHour: 25 },
 };
 
@@ -39,6 +40,7 @@ const getRateLimits = (model: string): RateLimits => {
   if (model === "flux-schnell") return RATE_LIMITS.flux;
   if (model === "lucid-origin") return RATE_LIMITS.lucid;
   if (model === "phoenix") return RATE_LIMITS.phoenix;
+  if (model === "flux-dev") return RATE_LIMITS.fluxdev;
   return RATE_LIMITS.default;
 };
 
@@ -167,6 +169,10 @@ export default function Generator() {
         setSteps([20]);
         setGuidance([7.5]);
         break;
+      case "flux-dev":
+        setSteps([25]);
+        setGuidance([7.5]);
+        break;
       default:
         setSteps([20]);
         setGuidance([7.5]);
@@ -188,16 +194,22 @@ export default function Generator() {
         });
 
         // Add model-specific parameters
-        if (steps[0] !== 20) params.append("steps", steps[0].toString());
+        const defaultSteps = model === "flux-dev" ? 25 : 20;
+        if (steps[0] !== defaultSteps)
+          params.append("steps", steps[0].toString());
         if (seed) params.append("seed", seed);
         if (width[0] !== 1024) params.append("width", width[0].toString());
         if (height[0] !== 1024) params.append("height", height[0].toString());
 
         // Add negative prompt for supported models
-        if (
-          negativePrompt.current?.value &&
-          ["sdxl", "sdxl-lightning", "dreamshaper", "phoenix"].includes(model)
-        ) {
+        const supportsNegativePrompt = [
+          "sdxl",
+          "sdxl-lightning",
+          "dreamshaper",
+          "phoenix",
+          "flux-dev",
+        ].includes(model);
+        if (supportsNegativePrompt && negativePrompt.current?.value) {
           params.append("negative_prompt", negativePrompt.current.value);
         }
 
@@ -274,6 +286,12 @@ export default function Generator() {
                   Flux Schnell
                 </span>{" "}
                 (Most Realistic and best model)🔥
+              </SelectItem>
+              <SelectItem value="flux-dev">
+                <span className="bg-gradient-to-r from-green-700 via-emerald-400 brightness-105 saturate-150 to-gray-900 w-fit bg-clip-text text-transparent">
+                  Flux Dev
+                </span>{" "}
+                (Highly realistic, multi-reference) ⚡
               </SelectItem>
               <SelectItem value="lucid-origin">
                 <span className="bg-gradient-to-r from-blue-500 via-purple-500 brightness-105 saturate-150 to-pink-500 w-fit bg-clip-text text-transparent">
@@ -359,10 +377,13 @@ export default function Generator() {
 
           {showAdvanced && (
             <div className="grid gap-4 animate-in slide-in-from-top-2 duration-200">
-              {/* Negative Prompt - Only for supported models */}
-              {["sdxl", "sdxl-lightning", "dreamshaper", "phoenix"].includes(
-                model
-              ) && (
+              {[
+                "sdxl",
+                "sdxl-lightning",
+                "dreamshaper",
+                "phoenix",
+                "flux-dev",
+              ].includes(model) && (
                 <div className="grid gap-2">
                   <Label htmlFor="negative-prompt" className="text-xs">
                     Negative Prompt{" "}
@@ -426,14 +447,20 @@ export default function Generator() {
                     max={
                       model === "flux-schnell"
                         ? 8
+                        : model === "phoenix" || model === "flux-dev"
+                        ? 50
                         : model === "lucid-origin"
                         ? 40
-                        : model === "phoenix"
-                        ? 50
                         : 20
                     }
+                    defaultValue={[
+                      model === "flux-schnell"
+                        ? 4
+                        : model === "flux-dev"
+                        ? 25
+                        : 20,
+                    ]}
                     step={1}
-                    defaultValue={[model === "flux-schnell" ? 4 : 20]}
                     className="w-full"
                   />
                 </div>

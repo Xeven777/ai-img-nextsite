@@ -4,7 +4,7 @@ A modern Next.js application for generating stunning AI images using multiple st
 
 ## ✨ Features
 
-- **6 AI Models**: Choose from Flux Schnell, Lucid Origin, Phoenix, Stable Diffusion variants, and Dreamshaper
+- **7 AI Models**: Choose from Flux Schnell, Flux Dev, Lucid Origin, Phoenix, Stable Diffusion variants, and Dreamshaper
 - **Advanced Parameters**: Full control over generation with collapsible advanced settings
 - **Model-Specific Optimization**: Automatic parameter adjustment based on selected model
 - **Negative Prompts**: Exclude unwanted elements (supported models)
@@ -41,14 +41,15 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 
 ## 🎨 Available Models
 
-| Model Name                     | Query Parameter  | Description                      | Rate Limit     |
-| ------------------------------ | ---------------- | -------------------------------- | -------------- |
-| **Flux Schnell**               | `flux-schnell`   | Most realistic and best model 🔥 | 4/min, 10/hour |
-| **Lucid Origin**               | `lucid-origin`   | High quality artistic images 🌟  | 4/min, 10/hour |
-| **Phoenix**                    | `phoenix`        | Creative generation 🔥           | 4/min, 10/hour |
-| **Stable Diffusion Lightning** | `sdxl-lightning` | Fastest generation ⚡            | 8/min, 25/hour |
-| **Stable Diffusion Base**      | `sdxl`           | Good for all around use ✨       | 8/min, 25/hour |
-| **Dreamshaper**                | `dreamshaper`    | Low Quality😇                    | 8/min, 25/hour |
+| Model Name                     | Query Parameter  | Description                          | Rate Limit     |
+| ------------------------------ | ---------------- | ------------------------------------ | -------------- |
+| **Flux Schnell**               | `flux-schnell`   | Most realistic and best model 🔥     | 4/min, 10/hour |
+| **Flux Dev**                   | `flux-dev`       | Highly realistic, multi-reference ⚡ | 4/min, 10/hour |
+| **Lucid Origin**               | `lucid-origin`   | High quality artistic images 🌟      | 4/min, 10/hour |
+| **Phoenix**                    | `phoenix`        | Creative generation 🔥               | 4/min, 10/hour |
+| **Stable Diffusion Lightning** | `sdxl-lightning` | Fastest generation ⚡                | 8/min, 25/hour |
+| **Stable Diffusion Base**      | `sdxl`           | Good for all around use ✨           | 8/min, 25/hour |
+| **Dreamshaper**                | `dreamshaper`    | Low Quality😇                        | 8/min, 25/hour |
 
 ## 🔧 API Reference
 
@@ -71,19 +72,20 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 
 #### Advanced Parameters
 
-| Parameter         | Type   | Description                     | Default         | Range/Notes                                         |
-| ----------------- | ------ | ------------------------------- | --------------- | --------------------------------------------------- |
-| `negative_prompt` | string | What to exclude from image      | -               | Supported: SDXL, Lightning, Dreamshaper, Phoenix    |
-| `width`           | number | Image width in pixels           | `1024`          | 256 - 2048 (step: 64)                               |
-| `height`          | number | Image height in pixels          | `1024`          | 256 - 2048 (step: 64)                               |
-| `steps`           | number | Number of diffusion steps       | Model-dependent | Flux: 1-8, Lucid: 1-40, Phoenix: 1-50, Others: 1-20 |
-| `seed`            | number | Random seed for reproducibility | Random          | Any positive integer                                |
+| Parameter         | Type   | Description                     | Default         | Range/Notes                                                                 |
+| ----------------- | ------ | ------------------------------- | --------------- | --------------------------------------------------------------------------- |
+| `negative_prompt` | string | What to exclude from image      | -               | Supported: Flux Dev, SDXL, Lightning, Dreamshaper, Phoenix                  |
+| `width`           | number | Image width in pixels           | `1024`          | 256 - 2048 (step: 64)                                                       |
+| `height`          | number | Image height in pixels          | `1024`          | 256 - 2048 (step: 64)                                                       |
+| `steps`           | number | Number of diffusion steps       | Model-dependent | Flux Schnell: 1-8, Flux Dev: 1-50, Lucid: 1-40, Phoenix: 1-50, Others: 1-20 |
+| `seed`            | number | Random seed for reproducibility | Random          | Any positive integer                                                        |
 
 #### Model-Specific Defaults
 
 | Model          | Default Steps | Default Guidance | Supported Negative Prompt |
 | -------------- | ------------- | ---------------- | ------------------------- |
 | Flux Schnell   | 4             | 7.5              | ❌                        |
+| Flux Dev       | 25            | 7.5              | ✅                        |
 | Lucid Origin   | 30            | 4.5              | ❌                        |
 | Phoenix        | 25            | 2.0              | ✅                        |
 | SDXL Lightning | 15            | 7.5              | ✅                        |
